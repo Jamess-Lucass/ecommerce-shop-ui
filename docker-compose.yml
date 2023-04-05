@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  ui:
+    image: ecommerce-shop-ui
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_IDENTITY_SERVICE_BASE_URL=http://localhost:1000
+        - NEXT_PUBLIC_LOGIN_UI_BASE_URL=http://localhost:2000
+        - NEXT_PUBLIC_CATALOG_SERVICE_BASE_URL=http://localhost:1002
+        - NEXT_PUBLIC_BASKET_SERVICE_BASE_URL=http://localhost:1003
+        - NEXT_PUBLIC_ORDER_SERVICE_BASE_URL=http://localhost:1004
+    container_name: ecommerce-shop-ui
+    ports:
+      - 2001:3000
+    restart: on-failure
