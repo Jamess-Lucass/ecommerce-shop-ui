@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-shop-ui-deployment
+  labels:
+    app: ecommerce-shop-ui-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecommerce-shop-ui-deployment
+  template:
+    metadata:
+      labels:
+        app: ecommerce-shop-ui-deployment
+    spec:
+      containers:
+        - name: ecommerce-shop-ui-container
+          image: ghcr.io/jamess-lucass/ecommerce-shop-ui:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 100m
+            limits:
+              memory: 200Mi
+              cpu: 200m

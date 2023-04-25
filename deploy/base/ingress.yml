@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecommerce-shop-ui-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: shop.jameslucas.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ecommerce-shop-ui-service
+                port:
+                  number: 80
