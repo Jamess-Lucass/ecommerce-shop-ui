@@ -6,6 +6,7 @@ import {
   Button,
   Container,
   IconButton,
+  Link,
   ListItemIcon,
   Menu,
   MenuItem,
@@ -25,6 +26,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useBasketIdStore } from "@/stores";
 import { Logout, Inventory2 } from "@mui/icons-material";
 import { useAuth } from "@/contexts/auth-context";
+import Image from "next/image";
 
 const routes = [{ name: "Catalog", to: "/catalog" }];
 
@@ -75,24 +77,35 @@ export default function Navbar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
+          <Link
             href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
+            component={NextLink}
+            display="flex"
+            underline="none"
+            color="white"
           >
-            LOGO
-          </Typography>
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={30}
+              height={30}
+              style={{ marginRight: 8 }}
+            />
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Shop
+            </Typography>
+          </Link>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
