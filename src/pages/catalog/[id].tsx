@@ -1,12 +1,12 @@
 import { env } from "@/environment";
 import { useBasketIdStore } from "@/stores";
 import { Basket, BasketItem, Catalog } from "@/types";
-import { LoadingButton } from "@mui/lab";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, Loader, Title, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { useRouter } from "next/router";
-import { useSnackbar } from "notistack";
+import { FiPlus } from "react-icons/fi";
 
 type Params = {
   id: string;
@@ -36,7 +36,6 @@ export default function CatalogDetails() {
   const { query, isReady } = useRouter();
   const queryClient = useQueryClient();
   const { basketId, setBasketId } = useBasketIdStore((state) => state);
-  const { enqueueSnackbar } = useSnackbar();
   const { id } = query as Params;
 
   const getCatalogItem = async (signal: AbortSignal | undefined) => {
@@ -70,7 +69,11 @@ export default function CatalogDetails() {
         );
 
         setBasketId(response.data.id);
-        enqueueSnackbar("Item added to your basket!", { variant: "success" });
+        notifications.show({
+          title: "Success",
+          message: "Item added to your basket!",
+          color: "green",
+        });
       },
     }
   );
@@ -92,17 +95,19 @@ export default function CatalogDetails() {
         );
 
         setBasketId(response.data.id);
-        enqueueSnackbar("Item added to your basket!", { variant: "success" });
+        notifications.show({
+          title: "Success",
+          message: "Item added to your basket!",
+          color: "green",
+        });
       },
     }
   );
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <Loader />;
 
   if (!data) {
-    return (
-      <Typography variant="h4">Could not retrieve the catalog item</Typography>
-    );
+    return <Title order={4}>Could not retrieve the catalog item</Title>;
   }
 
   const handleAddToBasketClick = (): void => {
@@ -138,21 +143,21 @@ export default function CatalogDetails() {
 
   return (
     <Box>
-      <Typography textTransform="capitalize" gutterBottom variant="h5">
+      <Title order={5} transform="capitalize">
         {data.name}
-      </Typography>
-      <Typography color="text.secondary">{data.description}</Typography>
-      <Typography>£{data.price.toPrecision(4)}</Typography>
+      </Title>
+      <Text color="text.secondary">{data.description}</Text>
+      <Text>£{data.price.toPrecision(4)}</Text>
 
-      <LoadingButton
+      <Button
         onClick={handleAddToBasketClick}
+        leftIcon={<FiPlus size="1rem" />}
         loading={
           createBasketMutation.isLoading || updateBasketMutation.isLoading
         }
-        variant="outlined"
       >
         Add to Basket
-      </LoadingButton>
+      </Button>
     </Box>
   );
 }

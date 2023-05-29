@@ -1,16 +1,15 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
-import {
-  createTheme,
-  CssBaseline,
-  ThemeProvider,
-  useMediaQuery,
-} from "@mui/material";
-import { useMemo } from "react";
 import Layout from "@/components/layout";
-import { SnackbarProvider } from "notistack";
 import Head from "next/head";
+import {
+  ColorScheme,
+  ColorSchemeProvider,
+  MantineProvider,
+} from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import { useLocalStorage } from "@mantine/hooks";
 
 const inter = Inter({ subsets: ["latin"], weight: "400" });
 
@@ -18,31 +17,46 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
-  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    key: "mantine-color-scheme",
+    defaultValue: "light",
+    getInitialValueInEffect: true,
+  });
 
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: prefersDarkMode ? "dark" : "light",
-        },
-      }),
-    [prefersDarkMode]
-  );
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
   return (
-    <ThemeProvider theme={theme}>
-      <SnackbarProvider maxSnack={3}>
-        <CssBaseline />
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider
+        theme={{
+          colorScheme,
+          globalStyles: (theme) => ({
+            body: {
+              backgroundColor:
+                theme.colorScheme === "dark"
+                  ? theme.colors.dark[7]
+                  : theme.colors.gray[0],
+            },
+          }),
+        }}
+        withCSSVariables
+        withGlobalStyles
+        withNormalizeCSS
+      >
         <Head>
           <title>Shop</title>
         </Head>
         <main className={inter.className}>
           <Layout>
+            <Notifications />
             <Component {...pageProps} />
           </Layout>
         </main>
-      </SnackbarProvider>
-    </ThemeProvider>
+      </MantineProvider>
+    </ColorSchemeProvider>
   );
 }

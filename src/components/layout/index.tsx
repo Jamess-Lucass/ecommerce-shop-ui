@@ -1,6 +1,5 @@
 import { AuthProvider } from "@/contexts/auth-context";
 import { ErrorResponse } from "@/types";
-import { Box } from "@mui/material";
 import {
   QueryClient,
   MutationCache,
@@ -8,13 +7,12 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AxiosError } from "axios";
-import { useSnackbar } from "notistack";
 import { PropsWithChildren, useState } from "react";
 import Navbar from "./navbar";
+import { notifications } from "@mantine/notifications";
+import { AppShell } from "@mantine/core";
 
 export default function Layout({ children }: PropsWithChildren) {
-  const { enqueueSnackbar } = useSnackbar();
-
   const [queryClient] = useState(
     new QueryClient({
       defaultOptions: {
@@ -29,10 +27,10 @@ export default function Layout({ children }: PropsWithChildren) {
         onError: (error) => {
           const err = error as AxiosError<ErrorResponse>;
 
-          enqueueSnackbar(
-            err.response?.data.message ?? "Unknown error has occured",
-            { variant: "error" }
-          );
+          notifications.show({
+            message: err.response?.data.message ?? "Unknown error has occured",
+            color: "red",
+          });
         },
       }),
     })
@@ -41,10 +39,9 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Box display="flex" flexDirection="column" minHeight="100vh">
-          <Navbar />
-          <Box padding={4}>{children}</Box>
-        </Box>
+        <AppShell padding="md" header={<Navbar />}>
+          {children}
+        </AppShell>
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

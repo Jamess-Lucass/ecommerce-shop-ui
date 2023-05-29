@@ -1,21 +1,10 @@
 import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
 import { Order } from "@/types";
-import {
-  CircularProgress,
-  Link,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Loader, Table, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import NextLink from "next/link";
+import Link from "next/link";
 
 export default function Orders() {
   const { user } = useAuth();
@@ -36,50 +25,41 @@ export default function Orders() {
     getOrders(signal)
   );
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <Loader />;
 
   if (!data) {
-    return <Typography variant="h4">Could not retrieve any orders</Typography>;
+    return <Title order={4}>Could not retrieve any orders</Title>;
   }
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Address</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Price</TableCell>
-            <TableCell>Created By</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row) => (
-            <TableRow
-              key={row.id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                <Link component={NextLink} href={`/orders/${row.id}`}>
-                  {row.id}
-                </Link>
-              </TableCell>
-              <TableCell>{row.address}</TableCell>
-              <TableCell>{row.email || user?.email}</TableCell>
-              <TableCell>
-                £
-                {Number(
-                  row.items.reduce((a, b) => a + b.price * b.quantity, 0)
-                ).toPrecision(4)}
-              </TableCell>
-              <TableCell>
-                {row.name || `${user?.firstName} ${user?.lastName}`}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Address</th>
+          <th>Email</th>
+          <th>Price</th>
+          <th>Created By</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row) => (
+          <tr key={row.id}>
+            <td>
+              <Link href={`/orders/${row.id}`}>{row.id}</Link>
+            </td>
+            <td>{row.address}</td>
+            <td>{row.email || user?.email}</td>
+            <td>
+              £
+              {Number(
+                row.items.reduce((a, b) => a + b.price * b.quantity, 0)
+              ).toPrecision(4)}
+            </td>
+            <td>{row.name || `${user?.firstName} ${user?.lastName}`}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 }

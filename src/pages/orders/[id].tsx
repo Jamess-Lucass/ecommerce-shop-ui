@@ -1,13 +1,7 @@
 import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
-import { Catalog, Order } from "@/types";
-import {
-  Box,
-  Card,
-  CardContent,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { APIResponse, Catalog, Order } from "@/types";
+import { Loader, Title, Text, Box, Card } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -40,7 +34,7 @@ export default function OrderDetails() {
   );
 
   const getCatalogItem = async (signal: AbortSignal | undefined) => {
-    const response = await axios.get<Catalog[]>(
+    const response = await axios.get<APIResponse<Catalog>>(
       `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog`,
       {
         signal,
@@ -57,48 +51,42 @@ export default function OrderDetails() {
     {
       enabled: !!order?.id,
       select: (data) =>
-        data.filter((x) =>
+        data.value.filter((x) =>
           order?.items.map((item) => item.catalogId).includes(x.id)
         ),
     }
   );
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <Loader />;
 
   if (!order) {
-    return <Typography variant="h4">Could not retrieve order</Typography>;
+    return <Title order={4}>Could not retrieve order</Title>;
   }
 
   return (
     <>
-      <Typography variant="h4">Order Id: {order.id}</Typography>
-      <Typography variant="body1">Address: {order.address}</Typography>
-      <Typography variant="body1">
-        Email: {order.email || user?.email}
-      </Typography>
-      <Typography variant="body1">Phone Number: {order.phoneNumber}</Typography>
-      <Typography variant="body1">
+      <Title variant="h4">Order Id: {order.id}</Title>
+      <Text>Address: {order.address}</Text>
+      <Text>Email: {order.email || user?.email}</Text>
+      <Text>Phone Number: {order.phoneNumber}</Text>
+      <Text>
         Total price: £
         {Number(
           order.items.reduce((a, b) => a + b.price * b.quantity, 0)
         ).toPrecision(4)}
-      </Typography>
+      </Text>
 
       <Box mt={4}>
         {order.items.map((item) => (
           <Card key={item.id} sx={{ width: 400, marginBottom: 2 }}>
-            <CardContent>
-              <Typography gutterBottom>Id: {item.id}</Typography>
-              <Typography textTransform="capitalize" gutterBottom>
-                Price: £{item.price.toPrecision(4)}
-              </Typography>
-              <Typography textTransform="capitalize" gutterBottom>
-                Quantity: {item.quantity}
-              </Typography>
-              <Typography textTransform="capitalize" gutterBottom>
-                {catalogItem?.find((x) => x.id == item.catalogId)?.name}
-              </Typography>
-            </CardContent>
+            <Text>Id: {item.id}</Text>
+            <Text transform="capitalize">
+              Price: £{item.price.toPrecision(4)}
+            </Text>
+            <Text transform="capitalize">Quantity: {item.quantity}</Text>
+            <Text transform="capitalize">
+              {catalogItem?.find((x) => x.id == item.catalogId)?.name}
+            </Text>
           </Card>
         ))}
       </Box>

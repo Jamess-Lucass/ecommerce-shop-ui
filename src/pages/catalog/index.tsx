@@ -1,22 +1,23 @@
 import { env } from "@/environment";
-import { Catalog } from "@/types";
+import { APIResponse, Catalog } from "@/types";
 import {
+  Loader,
+  Title,
   Box,
-  Button,
   Card,
-  CardActions,
-  CardContent,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+  Button,
+  Text,
+  Grid,
+  Flex,
+} from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import NextLink from "next/link";
+import Link from "next/link";
 
 export default function CatalogPage() {
   const getCatalog = async (signal: AbortSignal | undefined) => {
-    const response = await axios.get<Catalog[]>(
-      `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog`,
+    const response = await axios.get<APIResponse<Catalog>>(
+      `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog?top=10`,
       {
         signal,
         withCredentials: true,
@@ -26,38 +27,46 @@ export default function CatalogPage() {
     return response?.data;
   };
 
-  const { data, isLoading } = useQuery(["/api/v1/catalog"], ({ signal }) =>
-    getCatalog(signal)
+  const { data, isLoading } = useQuery(
+    ["/api/v1/catalog", "?top=10"],
+    ({ signal }) => getCatalog(signal)
   );
 
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return <Loader />;
 
   if (!data) {
-    return <Typography variant="h4">Could not retrieve the catalog</Typography>;
+    return <Title order={4}>Could not retrieve the catalog</Title>;
   }
 
   return (
-    <Box display="flex" gap={2}>
-      {data.map((item) => (
-        <Card key={item.id} sx={{ width: 300 }}>
-          <CardContent>
-            <Typography textTransform="capitalize" gutterBottom variant="h5">
-              {item.name}
-            </Typography>
-            <Typography color="text.secondary">{item.description}</Typography>
-            <Typography>£{item.price.toPrecision(4)}</Typography>
-          </CardContent>
-          <CardActions>
-            <Button
-              component={NextLink}
-              href={`/catalog/${item.id}`}
-              size="small"
-            >
-              View
-            </Button>
-          </CardActions>
-        </Card>
+    <Grid>
+      {data.value.map((item) => (
+        <Grid.Col key={item.id} sm={6} md={4} lg={3}>
+          <Card shadow="sm" radius="md" withBorder padding={12} h="200px">
+            <Flex direction="column" h="100%">
+              <Box sx={{ flex: 1 }}>
+                <Title transform="capitalize" order={5}>
+                  {item.name}
+                </Title>
+
+                <Text color="text.secondary" lineClamp={4}>
+                  {item.description}
+                </Text>
+              </Box>
+
+              <Flex>
+                <Title order={3} weight="normal" sx={{ flex: 1 }}>
+                  £{item.price.toPrecision(4)}
+                </Title>
+
+                <Link href={`/catalog/${item.id}`}>
+                  <Button>View</Button>
+                </Link>
+              </Flex>
+            </Flex>
+          </Card>
+        </Grid.Col>
       ))}
-    </Box>
+    </Grid>
   );
 }
