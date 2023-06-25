@@ -39,8 +39,8 @@ export default function BasketDetails() {
   const { setBasketId } = useBasketIdStore((state) => state);
   const queryClient = useQueryClient();
   const {
-    handleSubmit,
     register,
+    handleSubmit,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),

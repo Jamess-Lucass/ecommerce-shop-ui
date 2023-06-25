@@ -16,7 +16,7 @@ import {
   useMantineColorScheme,
   ActionIcon,
   Indicator,
-  Box,
+  NavLink,
 } from "@mantine/core";
 import Link from "next/link";
 import {
@@ -28,10 +28,12 @@ import {
   FiSun,
 } from "react-icons/fi";
 import { useStoreWrapper } from "@/hooks";
+import { useRouter } from "next/router";
 
 const routes = [{ name: "Catalog", to: "/catalog" }];
 
 export default function Navbar() {
+  const { route } = useRouter();
   const { user, signIn, signOut } = useAuth();
   const basketId = useStoreWrapper(useBasketIdStore, (state) => state.basketId);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -67,9 +69,14 @@ export default function Navbar() {
 
           <Group>
             {routes.map(({ name, to }) => (
-              <Link key={to} href={to}>
-                {name}
-              </Link>
+              <NavLink
+                component="a"
+                key={to}
+                href={to}
+                label={name}
+                active={route === to}
+                sx={{ borderRadius: "0.5rem" }}
+              />
             ))}
           </Group>
         </Flex>
@@ -84,6 +91,10 @@ export default function Navbar() {
             >
               <FiShoppingCart />
             </Indicator>
+          </ActionIcon>
+
+          <ActionIcon onClick={() => toggleColorScheme()}>
+            {dark ? <FiSun /> : <FiMoon />}
           </ActionIcon>
 
           {user ? (
@@ -117,12 +128,6 @@ export default function Navbar() {
 
                 <Menu.Divider />
 
-                <Menu.Item
-                  icon={dark ? <FiSun /> : <FiMoon />}
-                  onClick={() => toggleColorScheme()}
-                >
-                  Toggle Theme
-                </Menu.Item>
                 <Menu.Item color="red" icon={<FiLogOut />} onClick={signOut}>
                   Logout
                 </Menu.Item>
