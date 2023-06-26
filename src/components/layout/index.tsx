@@ -39,7 +39,7 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppShell padding="md" header={<Navbar />}>
+        <AppShell padding="lg" header={<Navbar />}>
           {children}
         </AppShell>
       </AuthProvider>

@@ -18,7 +18,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useStoreWrapper } from "@/hooks";
+import { formatPrice } from "@/utils/format-price";
 
 export const schema = z.object({
   name: z.string().min(1).max(256),
@@ -250,7 +250,7 @@ export default function BasketDetails() {
               <Card key={item.id} radius="sm" w={400}>
                 <Text>Id: {item.id}</Text>
                 <Text transform="capitalize">
-                  Price: £{item.price.toPrecision(4)}
+                  Price: £{formatPrice(item.price)}
                 </Text>
                 <Text transform="capitalize">Quantity: {item.quantity}</Text>
                 <Text transform="capitalize">

@@ -1,15 +1,22 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 dependencies:
   '@emotion/react':
     specifier: 11.11.0
     version: 11.11.0(@types/react@18.2.6)(react@18.2.0)
   '@emotion/server':
-    specifier: ^11.11.0
+    specifier: 11.11.0
     version: 11.11.0
   '@hookform/resolvers':
     specifier: 3.1.0
     version: 3.1.0(react-hook-form@7.43.9)
+  '@mantine/carousel':
+    specifier: 6.0.14
+    version: 6.0.14(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(embla-carousel-react@7.1.0)(react@18.2.0)
   '@mantine/core':
     specifier: 6.0.11
     version: 6.0.11(@emotion/react@11.11.0)(@mantine/hooks@6.0.11)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)
@@ -20,7 +27,7 @@ dependencies:
     specifier: 6.0.11
     version: 6.0.11(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(react-dom@18.2.0)(react@18.2.0)
   '@mantine/next':
-    specifier: ^6.0.11
+    specifier: 6.0.11
     version: 6.0.11(@emotion/react@11.11.0)(@emotion/server@11.11.0)(next@13.4.3)(react-dom@18.2.0)(react@18.2.0)
   '@mantine/notifications':
     specifier: 6.0.11
@@ -47,7 +54,7 @@ dependencies:
     specifier: 7.43.9
     version: 7.43.9(react@18.2.0)
   react-icons:
-    specifier: ^4.8.0
+    specifier: 4.8.0
     version: 4.8.0(react@18.2.0)
   zod:
     specifier: 3.21.4
@@ -331,6 +338,21 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
+  /@mantine/carousel@6.0.14(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(embla-carousel-react@7.1.0)(react@18.2.0):
+    resolution: {integrity: sha512-3mITs1jJ3cFL4y/GQQ77LimxbEN8wjsixN1wcH6xQtx5LwD0bkVwXpcjWL6iRTHCUA+9QxPmJzv95nvsL5QfcA==}
+    peerDependencies:
+      '@mantine/core': 6.0.14
+      '@mantine/hooks': 6.0.14
+      embla-carousel-react: ^7.0.0
+      react: '>=16.8.0'
+    dependencies:
+      '@mantine/core': 6.0.11(@emotion/react@11.11.0)(@mantine/hooks@6.0.11)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': 6.0.11(react@18.2.0)
+      '@mantine/utils': 6.0.14(react@18.2.0)
+      embla-carousel-react: 7.1.0(react@18.2.0)
+      react: 18.2.0
+    dev: false
+
   /@mantine/core@6.0.11(@emotion/react@11.11.0)(@mantine/hooks@6.0.11)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-S8koDsh1mlezqoOST7UfNfojKR0FWFIrzN3RkxoHlD7ggawrxeCPjHqk0bfUyKBvDOa2UiDpjWVYYSUtxZqpLw==}
     peerDependencies:
@@ -455,6 +477,14 @@ packages:
 
   /@mantine/utils@6.0.11(react@18.2.0):
     resolution: {integrity: sha512-ijkEAaKEhZCw7HSWsGMQZsvfmQKmJXmPoQ1LeEwcH3vjZalPk9pQjSPPfUdTeX9ZAv095XWmfVMiNV8+xvM0OQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /@mantine/utils@6.0.14(react@18.2.0):
+    resolution: {integrity: sha512-se+3IXJsNj4wnLMlqc7LiBe74m+JLQJ5o3wEcDtFzaJEtEt1rtw/1q3xKuROkH3xEiauhxQgzsc4gj/AslHy2A==}
     peerDependencies:
       react: '>=16.8.0'
     dependencies:
@@ -1313,6 +1343,19 @@ packages:
     resolution: {integrity: sha512-asLFVfWWtJ90ZyOUHMqk7/S2w2guQKxUI2itj3d92ADHhxUSbCMGi1f1cBcJ7xM1To+pE/Khbwo1yuNbMEPKeA==}
     dependencies:
       readable-stream: 2.3.8
+    dev: false
+
+  /embla-carousel-react@7.1.0(react@18.2.0):
+    resolution: {integrity: sha512-tbYRPRZSDNd2QLNqYDcArAakGIxtUbhS7tkP0dGXktXHGgcX+3ji3VrOUTOftBiujZrMV8kRxtrRUe/1soloIQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      embla-carousel: 7.1.0
+      react: 18.2.0
+    dev: false
+
+  /embla-carousel@7.1.0:
+    resolution: {integrity: sha512-Bh8Pa8NWzgugLkf8sAGexQlBCNDFaej5BXiKgQdRJ1mUC9NWBrw9Z23YVPVGkguWoz5LMjZXXFVGCobl3UPt/Q==}
     dev: false
 
   /emoji-regex@9.2.2:

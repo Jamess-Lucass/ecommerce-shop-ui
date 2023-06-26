@@ -1,5 +1,6 @@
 import { env } from "@/environment";
 import { APIResponse, Catalog } from "@/types";
+import { formatPrice } from "@/utils/format-price";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Loader,
@@ -11,24 +12,27 @@ import {
   Grid,
   Flex,
   Image,
-  Badge,
   Group,
   Input,
-  ActionIcon,
   Highlight,
-  CloseButton,
   Pagination,
-  Paper,
   TextInput,
   Center,
+  Anchor,
+  Breadcrumbs,
 } from "@mantine/core";
-import { useInputState, usePagination } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiChevronsLeft,
+  FiChevronsRight,
+  FiSearch,
+} from "react-icons/fi";
 import { z } from "zod";
 
 export const schema = z.object({
@@ -50,7 +54,7 @@ export default function CatalogPage() {
   });
 
   const [queryString, setQueryString] = useState<URLSearchParams>(
-    new URLSearchParams("top=10&count=true")
+    new URLSearchParams("top=12&count=true")
   );
 
   const getCatalog = async (signal: AbortSignal | undefined) => {
@@ -126,104 +130,110 @@ export default function CatalogPage() {
   const searchTerm = queryString.get("search") ?? "";
 
   return (
-    <Flex gap={20}>
-      <Card w="20%">
-        <Center mb={4}>Filters</Center>
+    <>
+      <Breadcrumbs mb={22} separator=">" px={48}>
+        <Anchor href="/">Home</Anchor>
+        <Text>Catalog</Text>
+      </Breadcrumbs>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Flex direction="column" gap={12}>
-            <TextInput
-              {...register("name")}
-              label="Name"
-              error={errors.name?.message}
-              placeholder="T-Shirt"
-            />
+      <Flex gap={20}>
+        <Card w="20%">
+          <Center mb={4}>Filters</Center>
 
-            <TextInput
-              {...register("description")}
-              label="Description"
-              error={errors.description?.message}
-              placeholder="A very cool T-Shirt"
-            />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Flex direction="column" gap={12}>
+              <TextInput
+                {...register("name")}
+                label="Name"
+                error={errors.name?.message}
+                placeholder="T-Shirt"
+              />
 
-            <Flex justify="space-between" mt={16}>
-              <Button color="red" onClick={handleResetFiltersOnClick}>
-                Reset
-              </Button>
-              <Button type="submit">Apply</Button>
+              <TextInput
+                {...register("description")}
+                label="Description"
+                error={errors.description?.message}
+                placeholder="A very cool T-Shirt"
+              />
+
+              <Flex justify="space-between" mt={16}>
+                <Button color="red" onClick={handleResetFiltersOnClick}>
+                  Reset
+                </Button>
+                <Button type="submit">Apply</Button>
+              </Flex>
             </Flex>
-          </Flex>
-        </form>
-      </Card>
+          </form>
+        </Card>
 
-      <Box sx={{ flex: 1 }}>
-        <Input
-          icon={<FiSearch />}
-          placeholder="Search by name or description"
-          onChange={handleSearchInputOnChange}
-        />
+        <Box sx={{ flex: 1 }}>
+          <Input
+            icon={<FiSearch />}
+            placeholder="Search by name or description"
+            onChange={handleSearchInputOnChange}
+          />
 
-        {data?.value.length === 0 && <Text>No results found.</Text>}
+          {data?.value.length === 0 && <Text>No results found.</Text>}
 
-        {isLoading ? (
-          <Loader my="md" />
-        ) : (
-          <Grid my="md">
-            {data.value.map((item) => (
-              <Grid.Col key={item.id} sm={6} md={4} lg={3}>
-                <Card shadow="sm" radius="md" withBorder padding={12}>
-                  <Card.Section>
-                    <Image
-                      src={`${item.images[0].url}?random=${item.id}`}
-                      height={200}
-                      alt="Norway"
-                    />
-                  </Card.Section>
+          {isLoading ? (
+            <Loader my="md" />
+          ) : (
+            <Grid my="md">
+              {data.value.map((item) => (
+                <Grid.Col key={item.id} sm={6} md={4} lg={3}>
+                  <Card shadow="sm" radius="md" withBorder padding={12}>
+                    <Card.Section>
+                      <Image
+                        src={`${item.images[0].url}?random=${item.id}`}
+                        alt={item.name}
+                      />
+                    </Card.Section>
 
-                  <Text weight={500} mt="md" mb="xs">
-                    <Highlight highlight={searchTerm}>{item.name}</Highlight>
-                  </Text>
+                    <Text weight={500} mt="md" mb="xs">
+                      <Highlight highlight={searchTerm}>{item.name}</Highlight>
+                    </Text>
 
-                  <Text
-                    size="sm"
-                    color="dimmed"
-                    lineClamp={2}
-                    sx={{ minHeight: "3rem" }}
-                  >
-                    <Highlight highlight={searchTerm}>
-                      {item.description}
-                    </Highlight>
-                  </Text>
+                    <Text
+                      size="sm"
+                      color="dimmed"
+                      lineClamp={2}
+                      sx={{ minHeight: "3rem" }}
+                    >
+                      <Highlight highlight={searchTerm}>
+                        {item.description}
+                      </Highlight>
+                    </Text>
 
-                  <Group position="apart" mt="md">
-                    <Text size="lg">£{item.price.toPrecision(4)}</Text>
-                    <Link href={`/catalog/${item.id}`}>
-                      <Button variant="light" color="blue" radius="md">
-                        View
-                      </Button>
-                    </Link>
-                  </Group>
-                </Card>
-              </Grid.Col>
-            ))}
-          </Grid>
-        )}
+                    <Group position="apart" mt="md">
+                      <Text size="lg">£{formatPrice(item.price)}</Text>
+                      <Link href={`/catalog/${item.id}`}>
+                        <Button variant="light" color="blue" radius="md">
+                          View
+                        </Button>
+                      </Link>
+                    </Group>
+                  </Card>
+                </Grid.Col>
+              ))}
+            </Grid>
+          )}
 
-        <Pagination.Root
-          total={totalPages}
-          onNextPage={() => handlePageOnChange(page + 1)}
-          onPreviousPage={() => handlePageOnChange(page - 1)}
-          onChange={(page) => handlePageOnChange(page)}
-        >
-          <Group spacing={7} position="center" mt="xl">
-            <Pagination.First icon={FiChevronLeft} />
-            <Pagination.Previous icon={FiChevronLeft} />
-            <Pagination.Items />
-            <Pagination.Next icon={FiChevronRight} />
-            <Pagination.Last icon={FiChevronRight} />
-          </Group>
-        </Pagination.Root>
-      </Box>
-    </Flex>
+          <Pagination.Root
+            total={totalPages}
+            onNextPage={() => handlePageOnChange(page + 1)}
+            onPreviousPage={() => handlePageOnChange(page - 1)}
+            onChange={(page) => handlePageOnChange(page)}
+          >
+            <Group spacing={7} position="center" mt="xl">
+              <Pagination.First icon={FiChevronsLeft} />
+              <Pagination.Previous icon={FiChevronLeft} />
+              <Pagination.Items />
+              <Pagination.Next icon={FiChevronRight} />
+              <Pagination.Last icon={FiChevronsRight} />
+            </Group>
+          </Pagination.Root>
+        </Box>
+      </Flex>
+    </>
   );
 }

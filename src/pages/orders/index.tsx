@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
 import { Order } from "@/types";
+import { formatPrice } from "@/utils/format-price";
 import { Loader, Table, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -52,9 +53,9 @@ export default function Orders() {
             <td>{row.email || user?.email}</td>
             <td>
               £
-              {Number(
+              {formatPrice(
                 row.items.reduce((a, b) => a + b.price * b.quantity, 0)
-              ).toPrecision(4)}
+              )}
             </td>
             <td>{row.name || `${user?.firstName} ${user?.lastName}`}</td>
           </tr>

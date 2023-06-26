@@ -60,11 +60,11 @@ export default function Navbar() {
   );
 
   return (
-    <Header height={60}>
+    <Header height={60} sx={{ paddingLeft: 48, paddingRight: 48 }}>
       <Flex align="center" h="100%" justify="space-between" mx={16}>
         <Flex gap={12}>
           <Link href="/">
-            <Image src="./logo.png" alt="Logo" width={32} />
+            <Image src="/logo.png" alt="Logo" width={32} />
           </Link>
 
           <Group>

@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
 import { APIResponse, Catalog, Order } from "@/types";
+import { formatPrice } from "@/utils/format-price";
 import { Loader, Title, Text, Box, Card } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -71,9 +72,7 @@ export default function OrderDetails() {
       <Text>Phone Number: {order.phoneNumber}</Text>
       <Text>
         Total price: £
-        {Number(
-          order.items.reduce((a, b) => a + b.price * b.quantity, 0)
-        ).toPrecision(4)}
+        {formatPrice(order.items.reduce((a, b) => a + b.price * b.quantity, 0))}
       </Text>
 
       <Box mt={4}>
