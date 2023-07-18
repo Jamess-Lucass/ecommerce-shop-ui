@@ -20,7 +20,11 @@ import {
   Center,
   Anchor,
   Breadcrumbs,
+  Drawer,
+  ActionIcon,
+  MediaQuery,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
@@ -31,6 +35,7 @@ import {
   FiChevronRight,
   FiChevronsLeft,
   FiChevronsRight,
+  FiFilter,
   FiSearch,
 } from "react-icons/fi";
 import { z } from "zod";
@@ -43,6 +48,7 @@ export const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export default function CatalogPage() {
+  const [opened, { open, close }] = useDisclosure(false);
   const {
     handleSubmit,
     register,
@@ -101,6 +107,7 @@ export default function CatalogPage() {
 
   const handleResetFiltersOnClick = () => {
     reset();
+    close();
     handleSubmit(onSubmit)();
   };
 
@@ -111,8 +118,6 @@ export default function CatalogPage() {
       .filter(([, value]) => !!value)
       .map(([key, value]) => `${key} contains '${value}'`);
 
-    console.log(filters);
-
     if (filters.length > 0) {
       params.set("filter", filters.join(" and "));
     } else {
@@ -120,6 +125,7 @@ export default function CatalogPage() {
     }
 
     setQueryString(params);
+    close();
   };
 
   const page =
@@ -129,49 +135,67 @@ export default function CatalogPage() {
     Math.ceil((data?.count || 1) / Number(queryString.get("top"))) ?? 1;
   const searchTerm = queryString.get("search") ?? "";
 
+  const FilterFormComponent = () => (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Flex direction="column" gap={12}>
+        <TextInput
+          {...register("name")}
+          label="Name"
+          error={errors.name?.message}
+          placeholder="T-Shirt"
+        />
+
+        <TextInput
+          {...register("description")}
+          label="Description"
+          error={errors.description?.message}
+          placeholder="A very cool T-Shirt"
+        />
+
+        <Flex justify="space-between" mt={16}>
+          <Button color="red" onClick={handleResetFiltersOnClick}>
+            Reset
+          </Button>
+          <Button type="submit">Apply</Button>
+        </Flex>
+      </Flex>
+    </form>
+  );
+
   return (
     <>
-      <Breadcrumbs mb={22} separator=">" px={48}>
+      <Breadcrumbs mb={22} separator=">" px={{ base: 0, lg: 48 }}>
         <Anchor href="/">Home</Anchor>
         <Text>Catalog</Text>
       </Breadcrumbs>
 
       <Flex gap={20}>
-        <Card w="20%">
-          <Center mb={4}>Filters</Center>
+        <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+          <Card w="20%">
+            <Center mb={4}>Filters</Center>
+            <FilterFormComponent />
+          </Card>
+        </MediaQuery>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Flex direction="column" gap={12}>
-              <TextInput
-                {...register("name")}
-                label="Name"
-                error={errors.name?.message}
-                placeholder="T-Shirt"
-              />
-
-              <TextInput
-                {...register("description")}
-                label="Description"
-                error={errors.description?.message}
-                placeholder="A very cool T-Shirt"
-              />
-
-              <Flex justify="space-between" mt={16}>
-                <Button color="red" onClick={handleResetFiltersOnClick}>
-                  Reset
-                </Button>
-                <Button type="submit">Apply</Button>
-              </Flex>
-            </Flex>
-          </form>
-        </Card>
+        <Drawer opened={opened} onClose={close} title="Filters">
+          <FilterFormComponent />
+        </Drawer>
 
         <Box sx={{ flex: 1 }}>
-          <Input
-            icon={<FiSearch />}
-            placeholder="Search by name or description"
-            onChange={handleSearchInputOnChange}
-          />
+          <Flex align="center" gap={12}>
+            <MediaQuery largerThan="md" styles={{ display: "none" }}>
+              <ActionIcon onClick={open}>
+                <FiFilter />
+              </ActionIcon>
+            </MediaQuery>
+
+            <Input
+              icon={<FiSearch />}
+              placeholder="Search by name or description"
+              onChange={handleSearchInputOnChange}
+              sx={{ flex: 1 }}
+            />
+          </Flex>
 
           {data?.value.length === 0 && <Text>No results found.</Text>}
 

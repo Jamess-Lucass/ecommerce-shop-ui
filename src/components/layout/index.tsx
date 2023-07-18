@@ -10,7 +10,7 @@ import { AxiosError } from "axios";
 import { PropsWithChildren, useState } from "react";
 import Navbar from "./navbar";
 import { notifications } from "@mantine/notifications";
-import { AppShell } from "@mantine/core";
+import { AppShell, MediaQuery } from "@mantine/core";
 
 export default function Layout({ children }: PropsWithChildren) {
   const [queryClient] = useState(
@@ -39,9 +39,7 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <AppShell padding="lg" header={<Navbar />}>
-          {children}
-        </AppShell>
+        <AppShell header={<Navbar />}>{children}</AppShell>
       </AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

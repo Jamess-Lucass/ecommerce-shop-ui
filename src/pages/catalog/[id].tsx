@@ -78,8 +78,6 @@ export default function CatalogDetails() {
 
   const quantity = watch("quantity");
 
-  console.log(getValues());
-
   const getCatalogItem = async (signal: AbortSignal | undefined) => {
     const response = await axios.get<Catalog>(
       `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog/${id}`,

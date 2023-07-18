@@ -60,7 +60,7 @@ export default function Navbar() {
   );
 
   return (
-    <Header height={60} sx={{ paddingLeft: 48, paddingRight: 48 }}>
+    <Header height={60} px={{ base: 0, lg: 48 }}>
       <Flex align="center" h="100%" justify="space-between" mx={16}>
         <Flex gap={12}>
           <Link href="/">
