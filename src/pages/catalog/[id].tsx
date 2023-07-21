@@ -188,14 +188,14 @@ export default function CatalogDetails() {
   };
 
   return (
-    <Box px={48}>
+    <Box px={{ base: 0, lg: 48 }}>
       <Breadcrumbs mb={22} separator=">">
         <Anchor href="/">Home</Anchor>
         <Anchor href="/catalog">Catalog</Anchor>
         <Text>{data.name}</Text>
       </Breadcrumbs>
 
-      <Flex gap={48}>
+      <Flex direction={{ base: "column", lg: "row" }} gap={48}>
         <Flex direction="column" gap={24} maw={500}>
           <Image
             src={`${mainImageUrl}?random=${data.images[0].id}`}
@@ -259,7 +259,14 @@ export default function CatalogDetails() {
           <Text>{data.description}</Text>
         </Box>
 
-        <Card shadow="sm" radius="md" withBorder padding={12} w={300} h={256}>
+        <Card
+          shadow="sm"
+          radius="md"
+          withBorder
+          padding={12}
+          w={{ base: "100%", sm: 300 }}
+          h={256}
+        >
           <form onSubmit={handleSubmit(onSubmit)} style={{ height: "100%" }}>
             <Flex
               direction="column"
