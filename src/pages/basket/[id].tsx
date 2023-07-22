@@ -11,14 +11,16 @@ import { notifications } from "@mantine/notifications";
 import {
   Box,
   Button,
-  Card,
   Flex,
   Loader,
   TextInput,
   Text,
   Title,
+  Anchor,
+  Breadcrumbs,
 } from "@mantine/core";
 import { formatPrice } from "@/utils/format-price";
+import BasketItem from "@/components/basket/basket-item";
 
 export const schema = z.object({
   name: z.string().min(1).max(256),
@@ -65,9 +67,13 @@ export default function BasketDetails() {
     { enabled: isReady }
   );
 
+  const filters = basket?.items
+    .map((item) => `id eq '${item.catalogId}'`)
+    .join(" or ");
+
   const getCatalogItems = async (signal: AbortSignal | undefined) => {
     const response = await axios.get<APIResponse<Catalog>>(
-      `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog`,
+      `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog?filter=${filters}`,
       {
         signal,
         withCredentials: true,
@@ -77,15 +83,11 @@ export default function BasketDetails() {
     return response?.data;
   };
 
-  const { data: catalogItem } = useQuery(
-    ["/api/v1/catalog"],
+  const { data: catalogItems } = useQuery(
+    ["/api/v1/catalog", filters],
     ({ signal }) => getCatalogItems(signal),
     {
       enabled: !!basket?.id,
-      select: (data) =>
-        data.value.filter((x) =>
-          basket?.items.map((item) => item.catalogId).includes(x.id)
-        ),
     }
   );
 
@@ -104,24 +106,6 @@ export default function BasketDetails() {
           ["/api/v1/baskets", basket?.id],
           () => response.data
         );
-      },
-    }
-  );
-
-  const deleteBasketMutation = useMutation(
-    () =>
-      axios.delete(
-        `${env.BASKET_SERVICE_BASE_URL}/api/v1/baskets/${basket?.id}`,
-        {
-          withCredentials: true,
-        }
-      ),
-    {
-      onSuccess: () => {
-        setBasketId(undefined);
-        queryClient.removeQueries(["/api/v1/baskets", basket?.id]);
-
-        push("/catalog");
       },
     }
   );
@@ -156,51 +140,54 @@ export default function BasketDetails() {
     return <Title order={4}>No basket found.</Title>;
   }
 
-  const handleRemoveAllClick = () => {
-    deleteBasketMutation.mutate();
-  };
-
-  const handleRemoveBasketItemClick = (id: string) => {
-    updateBasketMutation.mutate({
-      ...basket,
-      items: basket.items.filter((x) => x.id !== id),
-    });
-  };
-
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     checkoutBasketMutation.mutate(data);
   };
 
+  const totalPrice = basket.items.reduce(
+    (prev, item) => prev + item.price * item.quantity,
+    0
+  );
+
   return (
-    <Box>
-      <Flex gap={2}>
-        <Title
-          sx={{ flex: 1 }}
-          transform="capitalize"
-          // gutterBottom
-          order={5}
-        >
-          Basket Id: {basket?.id}
-        </Title>
+    <Box px={{ base: 0, lg: 48 }}>
+      <Breadcrumbs mb={22} separator=">">
+        <Anchor href="/">Home</Anchor>
+        <Anchor href="/catalog">Catalog</Anchor>
+        <Text>Basket</Text>
+      </Breadcrumbs>
 
-        <Flex gap={8}>
-          <Button color="success" type="submit" form="basket-checkout">
-            Checkout
-          </Button>
+      <Flex direction={{ base: "column", lg: "row" }} gap={24}>
+        <Flex direction="column" justify="space-between" w="100%">
+          <Box maw="350px">
+            <Title transform="capitalize" order={4} my={8}>
+              My Basket
+            </Title>
 
-          <Button color="red" onClick={handleRemoveAllClick}>
-            Remove All
-          </Button>
-        </Flex>
-      </Flex>
+            <Flex gap={24} direction="column">
+              {basket.items.map((item) => {
+                const catalogItem = catalogItems?.value?.find(
+                  (x) => x.id == item.catalogId
+                );
 
-      <Flex gap={4}>
-        <Box sx={{ flex: 1 }}>
-          <Title transform="capitalize" order={6} mb={2}>
-            Delivery Information
-          </Title>
+                return (
+                  <BasketItem
+                    key={item.id}
+                    item={item}
+                    catalogItem={catalogItem}
+                    basket={basket}
+                    updateBasketMutation={updateBasketMutation}
+                  />
+                );
+              })}
+            </Flex>
+          </Box>
 
-          <Card radius="sm" padding={12}>
+          <Box>
+            <Title transform="capitalize" order={4} my={8}>
+              Delivery Information
+            </Title>
+
             <form id="basket-checkout" onSubmit={handleSubmit(onSubmit)}>
               <Flex direction="column" gap={8}>
                 <Flex gap={12}>
@@ -237,38 +224,28 @@ export default function BasketDetails() {
                 </Flex>
               </Flex>
             </form>
-          </Card>
-        </Box>
+          </Box>
+        </Flex>
 
-        <Flex direction="column">
-          <Title transform="capitalize" order={6} mb={2}>
-            Order summary
+        <Box miw="300px">
+          <Title transform="capitalize" order={4} mb={2}>
+            Summary
           </Title>
 
-          <Flex direction="column" gap={4}>
-            {basket?.items.map((item) => (
-              <Card key={item.id} radius="sm" w={400}>
-                <Text>Id: {item.id}</Text>
-                <Text transform="capitalize">
-                  Price: £{formatPrice(item.price)}
-                </Text>
-                <Text transform="capitalize">Quantity: {item.quantity}</Text>
-                <Text transform="capitalize">
-                  {catalogItem?.find((x) => x.id == item.catalogId)?.name}
-                </Text>
-
-                <Flex mt={12}>
-                  <Button
-                    color="red"
-                    onClick={() => handleRemoveBasketItemClick(item.id)}
-                  >
-                    Remove
-                  </Button>
-                </Flex>
-              </Card>
-            ))}
+          <Flex align="center" justify="space-between" my={6}>
+            <Text>Total</Text>
+            <Text>£{formatPrice(totalPrice)}</Text>
           </Flex>
-        </Flex>
+
+          <Button
+            fullWidth
+            disabled={basket.items.length === 0}
+            type="submit"
+            form="basket-checkout"
+          >
+            Checkout (£{formatPrice(totalPrice)})
+          </Button>
+        </Box>
       </Flex>
     </Box>
   );

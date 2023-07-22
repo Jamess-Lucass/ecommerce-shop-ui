@@ -7,6 +7,7 @@ import {
   ColorScheme,
   ColorSchemeProvider,
   MantineProvider,
+  MediaQuery,
 } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { useLocalStorage } from "@mantine/hooks";
@@ -52,7 +53,12 @@ export default function App({
         </Head>
         <main className={inter.className}>
           <Layout>
-            <Notifications />
+            <MediaQuery largerThan="lg" styles={{ display: "none" }}>
+              <Notifications position="top-right" />
+            </MediaQuery>
+            <MediaQuery smallerThan="lg" styles={{ display: "none" }}>
+              <Notifications position="bottom-right" />
+            </MediaQuery>
             <Component {...pageProps} />
           </Layout>
         </main>
