@@ -176,11 +176,11 @@ export default function CatalogDetails() {
     let basketItem = basket.items.find((x) => x.catalogId == data.id);
 
     if (basketItem) {
-      basketItem.quantity++;
+      basketItem.quantity += values.quantity;
     } else {
       basket.items.push({
         catalogId: data.id,
-        quantity: 1,
+        quantity: values.quantity,
       } as BasketItem);
     }
 

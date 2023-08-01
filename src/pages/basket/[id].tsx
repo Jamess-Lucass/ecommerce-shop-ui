@@ -136,7 +136,7 @@ export default function BasketDetails() {
 
   if (isLoading) return <Loader />;
 
-  if (!basket) {
+  if (!basket || basket.items.length === 0) {
     return <Title order={4}>No basket found.</Title>;
   }
 
