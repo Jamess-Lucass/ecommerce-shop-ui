@@ -79,12 +79,15 @@ export default function CatalogPage() {
 
   const { data, isLoading } = useQuery(
     ["/api/v1/catalog", queryString.toString()],
-    ({ signal }) => getCatalog(signal)
+    ({ signal }) => getCatalog(signal),
+    {
+      placeholderData: { value: [] }
+    }
   );
 
-  if (!data && !isLoading) {
-    return <Title order={4}>Could not retrieve the catalog</Title>;
-  }
+  // if (!data && !isLoading) {
+  //   return <Title order={4}>Could not retrieve the catalog</Title>;
+  // }
 
   const handleSearchInputOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTimeout(() => {
@@ -171,7 +174,7 @@ export default function CatalogPage() {
 
       <Flex gap={20}>
         <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-          <Card w="20%">
+          <Card w="20%" h="fit-content">
             <Center mb={4}>Filters</Center>
             <FilterFormComponent />
           </Card>
@@ -181,7 +184,7 @@ export default function CatalogPage() {
           <FilterFormComponent />
         </Drawer>
 
-        <Box sx={{ flex: 1 }}>
+        <Flex sx={{ flex: 1 }} direction="column" gap={18}>
           <Flex align="center" gap={12}>
             <MediaQuery largerThan="md" styles={{ display: "none" }}>
               <ActionIcon onClick={open}>
@@ -200,15 +203,15 @@ export default function CatalogPage() {
           {data?.value.length === 0 && <Text>No results found.</Text>}
 
           {isLoading ? (
-            <Loader my="md" />
+            <Loader />
           ) : (
-            <Grid my="md">
+            <Grid>
               {data.value.map((item) => (
                 <Grid.Col key={item.id} sm={6} md={4} lg={3}>
                   <Card shadow="sm" radius="md" withBorder padding={12}>
                     <Card.Section>
                       <Image
-                        src={`${item.images[0].url}?random=${item.id}`}
+                        src={item.images[0].url}
                         alt={item.name}
                       />
                     </Card.Section>
@@ -248,7 +251,7 @@ export default function CatalogPage() {
             onPreviousPage={() => handlePageOnChange(page - 1)}
             onChange={(page) => handlePageOnChange(page)}
           >
-            <Group spacing={7} position="center" mt="xl">
+            <Group spacing={7} position="center">
               <Pagination.First icon={FiChevronsLeft} />
               <Pagination.Previous icon={FiChevronLeft} />
               <Pagination.Items />
@@ -256,7 +259,7 @@ export default function CatalogPage() {
               <Pagination.Last icon={FiChevronsRight} />
             </Group>
           </Pagination.Root>
-        </Box>
+        </Flex>
       </Flex>
     </>
   );

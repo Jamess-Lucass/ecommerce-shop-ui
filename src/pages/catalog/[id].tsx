@@ -97,7 +97,7 @@ export default function CatalogDetails() {
       enabled: isReady,
       onSuccess: (data) => {
         const image = data.images[0];
-        setMainImageUrl(`${image.url}?random=${image.id}`);
+        setMainImageUrl(image.url);
       },
     }
   );
@@ -197,11 +197,7 @@ export default function CatalogDetails() {
 
       <Flex direction={{ base: "column", lg: "row" }} gap={48}>
         <Flex direction="column" gap={24} maw={500}>
-          <Image
-            src={`${mainImageUrl}?random=${data.images[0].id}`}
-            alt={data.name}
-            radius="md"
-          />
+          <Image src={mainImageUrl} alt={data.name} radius="md" />
 
           <Carousel
             withIndicators
@@ -218,19 +214,17 @@ export default function CatalogDetails() {
                   variant="subtle"
                   h="100%"
                   p={0}
-                  onClick={() =>
-                    setMainImageUrl(`${image.url}?random=${image.id}`)
-                  }
+                  onClick={() => setMainImageUrl(image.url)}
                 >
                   <Image
-                    src={`${image.url}?random=${image.id}`}
+                    src={image.url}
                     alt={`${data.name}-${index}`}
                     radius="sm"
                     sx={{ objectFit: "cover" }}
                     styles={(theme) => ({
                       root: {
                         border:
-                          mainImageUrl === `${image.url}?random=${image.id}`
+                          mainImageUrl === image.url
                             ? theme.colorScheme === "dark"
                               ? `2px solid ${theme.colors["gray"][5]}`
                               : `2px solid ${theme.colors["gray"][7]}`
