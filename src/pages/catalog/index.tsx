@@ -25,7 +25,7 @@ import {
   MediaQuery,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
@@ -48,6 +48,7 @@ export const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export default function CatalogPage() {
+  const queryClient = useQueryClient();
   const [opened, { open, close }] = useDisclosure(false);
   const {
     handleSubmit,
@@ -81,13 +82,12 @@ export default function CatalogPage() {
     ["/api/v1/catalog", queryString.toString()],
     ({ signal }) => getCatalog(signal),
     {
-      placeholderData: { value: [] }
+      placeholderData: { value: [] },
+      onError: () => {
+        queryClient.setQueryData(["/api/v1/catalog", queryString.toString()], { value: [] })
+      }
     }
   );
-
-  // if (!data && !isLoading) {
-  //   return <Title order={4}>Could not retrieve the catalog</Title>;
-  // }
 
   const handleSearchInputOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTimeout(() => {
