@@ -25,7 +25,7 @@ import {
   MediaQuery,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
@@ -38,6 +38,7 @@ import {
   FiFilter,
   FiSearch,
 } from "react-icons/fi";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import { z } from "zod";
 
 export const schema = z.object({
@@ -83,9 +84,63 @@ export default function CatalogPage() {
     ({ signal }) => getCatalog(signal),
     {
       placeholderData: { value: [] },
-      onError: () => {
-        queryClient.setQueryData(["/api/v1/catalog", queryString.toString()], { value: [] })
-      }
+    }
+  );
+
+  const likeCatalogitemMutation = useMutation(
+    (id: Catalog["id"]) =>
+      axios.post(
+        `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog/${id}/like`,
+        null,
+        {
+          withCredentials: true,
+        }
+      ),
+    {
+      onSuccess: (_, id) => {
+        queryClient.setQueryData<APIResponse<Catalog>>(
+          ["/api/v1/catalog", queryString.toString()],
+          (prev) =>
+            ({
+              ...prev,
+              value:
+                prev?.value.map((item) => {
+                  if (item.id === id) {
+                    return { ...item, isLiked: true };
+                  }
+                  return item;
+                }) ?? [],
+            } satisfies APIResponse<Catalog>)
+        );
+      },
+    }
+  );
+
+  const deleteLikeCatalogitemMutation = useMutation(
+    (id: Catalog["id"]) =>
+      axios.delete(
+        `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog/${id}/like`,
+        {
+          withCredentials: true,
+        }
+      ),
+    {
+      onSuccess: (_, id) => {
+        queryClient.setQueryData<APIResponse<Catalog>>(
+          ["/api/v1/catalog", queryString.toString()],
+          (prev) =>
+            ({
+              ...prev,
+              value:
+                prev?.value.map((item) => {
+                  if (item.id === id) {
+                    return { ...item, isLiked: false };
+                  }
+                  return item;
+                }) ?? [],
+            } satisfies APIResponse<Catalog>)
+        );
+      },
     }
   );
 
@@ -112,6 +167,14 @@ export default function CatalogPage() {
     reset();
     close();
     handleSubmit(onSubmit)();
+  };
+
+  const handleLikeProductOnClick = (catalog: Catalog) => {
+    if (catalog.isLiked) {
+      return deleteLikeCatalogitemMutation.mutate(catalog.id);
+    }
+
+    return likeCatalogitemMutation.mutate(catalog.id);
   };
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -200,25 +263,35 @@ export default function CatalogPage() {
             />
           </Flex>
 
-          {data?.value.length === 0 && <Text>No results found.</Text>}
+          {(!data || data?.value.length === 0) && !isLoading && (
+            <Text>No results found.</Text>
+          )}
 
           {isLoading ? (
             <Loader />
           ) : (
             <Grid>
-              {data.value.map((item) => (
+              {data?.value.map((item) => (
                 <Grid.Col key={item.id} sm={6} md={4} lg={3}>
                   <Card shadow="sm" radius="md" withBorder padding={12}>
                     <Card.Section>
-                      <Image
-                        src={item.images[0].url}
-                        alt={item.name}
-                      />
+                      <Image src={item.images[0].url} alt={item.name} />
                     </Card.Section>
 
-                    <Text weight={500} mt="md" mb="xs">
-                      <Highlight highlight={searchTerm}>{item.name}</Highlight>
-                    </Text>
+                    <Flex align="center" justify="space-between">
+                      <Text weight={500} mt="md" mb="xs">
+                        <Highlight highlight={searchTerm}>
+                          {item.name}
+                        </Highlight>
+                      </Text>
+
+                      <ActionIcon
+                        variant="transparent"
+                        onClick={() => handleLikeProductOnClick(item)}
+                      >
+                        {item.isLiked ? <MdFavorite /> : <MdFavoriteBorder />}
+                      </ActionIcon>
+                    </Flex>
 
                     <Text
                       size="sm"

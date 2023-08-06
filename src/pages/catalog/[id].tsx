@@ -27,6 +27,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { FiShoppingCart } from "react-icons/fi";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import { z } from "zod";
 
 type Params = {
@@ -150,11 +151,56 @@ export default function CatalogDetails() {
     }
   );
 
+  const likeCatalogitemMutation = useMutation(
+    () =>
+      axios.post(
+        `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog/${data?.id}/like`,
+        null,
+        {
+          withCredentials: true,
+        }
+      ),
+    {
+      onSuccess: () => {
+        queryClient.setQueryData<Catalog>(
+          ["/api/v1/catalog", data?.id],
+          (prev) => ({ ...prev, isLiked: true } as Catalog)
+        );
+      },
+    }
+  );
+
+  const deleteLikeCatalogitemMutation = useMutation(
+    () =>
+      axios.delete(
+        `${env.CATALOG_SERVICE_BASE_URL}/api/v1/catalog/${data?.id}/like`,
+        {
+          withCredentials: true,
+        }
+      ),
+    {
+      onSuccess: () => {
+        queryClient.setQueryData<Catalog>(
+          ["/api/v1/catalog", data?.id],
+          (prev) => ({ ...prev, isLiked: false } as Catalog)
+        );
+      },
+    }
+  );
+
   if (isLoading) return <Loader />;
 
   if (!data) {
     return <Title order={4}>Could not retrieve the catalog item</Title>;
   }
+
+  const handleLikeProductOnClick = () => {
+    if (data.isLiked) {
+      return deleteLikeCatalogitemMutation.mutate();
+    }
+
+    return likeCatalogitemMutation.mutate();
+  };
 
   const onSubmit: SubmitHandler<Inputs> = (values) => {
     const basket = queryClient.getQueryData<Basket>([
@@ -240,9 +286,18 @@ export default function CatalogDetails() {
         </Flex>
 
         <Box sx={{ flex: 1 }}>
-          <Title weight={500} transform="capitalize" mb={12}>
-            {data.name}
-          </Title>
+          <Flex>
+            <Title weight={500} transform="capitalize" mb={12} sx={{ flex: 1 }}>
+              {data.name}
+            </Title>
+            <ActionIcon
+              variant="transparent"
+              onClick={handleLikeProductOnClick}
+            >
+              {data.isLiked ? <MdFavorite /> : <MdFavoriteBorder />}
+            </ActionIcon>
+          </Flex>
+
           <Title weight={400} order={3}>
             £{formatPrice(data.price)}
           </Title>

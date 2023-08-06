@@ -7,6 +7,7 @@ export type Catalog = {
   name: string;
   description: string;
   price: number;
+  isLiked: boolean;
   images: Image[];
 };
 
