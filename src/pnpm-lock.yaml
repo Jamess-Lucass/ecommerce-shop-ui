@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -12,8 +12,8 @@ dependencies:
     specifier: 11.11.0
     version: 11.11.0
   '@hookform/resolvers':
-    specifier: 3.1.0
-    version: 3.1.0(react-hook-form@7.43.9)
+    specifier: 3.2.0
+    version: 3.2.0(react-hook-form@7.43.9)
   '@mantine/carousel':
     specifier: 6.0.14
     version: 6.0.14(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(embla-carousel-react@7.1.0)(react@18.2.0)
@@ -310,8 +310,8 @@ packages:
       tabbable: 6.1.2
     dev: false
 
-  /@hookform/resolvers@3.1.0(react-hook-form@7.43.9):
-    resolution: {integrity: sha512-z0A8K+Nxq+f83Whm/ajlwE6VtQlp/yPHZnXw7XWVPIGm1Vx0QV8KThU3BpbBRfAZ7/dYqCKKBNnQh85BkmBKkA==}
+  /@hookform/resolvers@3.2.0(react-hook-form@7.43.9):
+    resolution: {integrity: sha512-skXQHhLxq0Sz2xDwCyv5dygBCtXJe1GmWwxDzfdtl0X6agD6qcyTG8HrZWkjJoy8AkiLARqYvSYJ8z7+Nwmi7w==}
     peerDependencies:
       react-hook-form: ^7.0.0
     dependencies:
