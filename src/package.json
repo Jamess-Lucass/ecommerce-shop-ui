@@ -26,7 +26,7 @@
     "react-hook-form": "7.43.9",
     "react-icons": "4.8.0",
     "zod": "3.21.4",
-    "zustand": "4.3.8"
+    "zustand": "4.4.1"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "4.29.7",
