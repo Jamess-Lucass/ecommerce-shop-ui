@@ -1,3 +1,5 @@
+import LoginModal from "@/components/auth/login-modal";
+import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
 import { APIResponse, Catalog } from "@/types";
 import { formatPrice } from "@/utils/format-price";
@@ -49,8 +51,14 @@ export const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export default function CatalogPage() {
+  const { user } = useAuth();
+  const [isAuthModalOpen, { open: authModalOpen, close: authModalClose }] =
+    useDisclosure(false);
   const queryClient = useQueryClient();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [
+    isFilterDrawerOpen,
+    { open: filterDrawerOpen, close: filterDrawerClose },
+  ] = useDisclosure(false);
   const {
     handleSubmit,
     register,
@@ -170,6 +178,10 @@ export default function CatalogPage() {
   };
 
   const handleLikeProductOnClick = (catalog: Catalog) => {
+    if (!user) {
+      return authModalOpen();
+    }
+
     if (catalog.isLiked) {
       return deleteLikeCatalogitemMutation.mutate(catalog.id);
     }
@@ -243,14 +255,10 @@ export default function CatalogPage() {
           </Card>
         </MediaQuery>
 
-        <Drawer opened={opened} onClose={close} title="Filters">
-          <FilterFormComponent />
-        </Drawer>
-
         <Flex sx={{ flex: 1 }} direction="column" gap={18}>
           <Flex align="center" gap={12}>
             <MediaQuery largerThan="md" styles={{ display: "none" }}>
-              <ActionIcon onClick={open}>
+              <ActionIcon onClick={filterDrawerOpen}>
                 <FiFilter />
               </ActionIcon>
             </MediaQuery>
@@ -334,6 +342,16 @@ export default function CatalogPage() {
           </Pagination.Root>
         </Flex>
       </Flex>
+
+      <Drawer
+        opened={isFilterDrawerOpen}
+        onClose={filterDrawerClose}
+        title="Filters"
+      >
+        <FilterFormComponent />
+      </Drawer>
+
+      <LoginModal isOpen={isAuthModalOpen} close={authModalClose} />
     </>
   );
 }
