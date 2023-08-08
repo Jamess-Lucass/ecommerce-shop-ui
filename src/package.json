@@ -11,7 +11,7 @@
     "@emotion/react": "11.11.0",
     "@emotion/server": "11.11.0",
     "@hookform/resolvers": "3.2.0",
-    "@mantine/carousel": "6.0.14",
+    "@mantine/carousel": "6.0.18",
     "@mantine/core": "6.0.11",
     "@mantine/hooks": "6.0.11",
     "@mantine/modals": "6.0.11",
