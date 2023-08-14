@@ -15,8 +15,8 @@ dependencies:
     specifier: 3.2.0
     version: 3.2.0(react-hook-form@7.43.9)
   '@mantine/carousel':
-    specifier: 6.0.18
-    version: 6.0.18(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(embla-carousel-react@7.1.0)(react@18.2.0)
+    specifier: 6.0.19
+    version: 6.0.19(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(embla-carousel-react@7.1.0)(react@18.2.0)
   '@mantine/core':
     specifier: 6.0.11
     version: 6.0.11(@emotion/react@11.11.0)(@mantine/hooks@6.0.11)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)
@@ -338,17 +338,17 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
-  /@mantine/carousel@6.0.18(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(embla-carousel-react@7.1.0)(react@18.2.0):
-    resolution: {integrity: sha512-cnDYh2oXXUs35j7xsd26Nkl7zJK6cMETNr8fst1unTxZBhxQ7oVtx4Muc1Tgtrc2Ew+GoWrJgBOuxbKHfh+QbA==}
+  /@mantine/carousel@6.0.19(@mantine/core@6.0.11)(@mantine/hooks@6.0.11)(embla-carousel-react@7.1.0)(react@18.2.0):
+    resolution: {integrity: sha512-vEhsev8+XdETrCWrv3aQBHKVxcHcMK8xhYz+iVQo3Y9zHB9wrlTNEAa9hImBtmtoVWqtfu6zjJeOtf5oeT8Y9g==}
     peerDependencies:
-      '@mantine/core': 6.0.18
-      '@mantine/hooks': 6.0.18
+      '@mantine/core': 6.0.19
+      '@mantine/hooks': 6.0.19
       embla-carousel-react: ^7.0.0
       react: '>=16.8.0'
     dependencies:
       '@mantine/core': 6.0.11(@emotion/react@11.11.0)(@mantine/hooks@6.0.11)(@types/react@18.2.6)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 6.0.11(react@18.2.0)
-      '@mantine/utils': 6.0.18(react@18.2.0)
+      '@mantine/utils': 6.0.19(react@18.2.0)
       embla-carousel-react: 7.1.0(react@18.2.0)
       react: 18.2.0
     dev: false
@@ -483,8 +483,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@mantine/utils@6.0.18(react@18.2.0):
-    resolution: {integrity: sha512-xvTnAUUHsdpsBm7OrcBueGEPdBwDm7wzUBsHweqSZMjT/HQOf4w4iirefNrFhMD2wNVetNL42kEngEBe6t63/w==}
+  /@mantine/utils@6.0.19(react@18.2.0):
+    resolution: {integrity: sha512-duvtnaW1gDR2gnvUqnWhl6DMW7sN0HEWqS8Z/BbwaMi75U+Xp17Q72R9JtiIrxQbzsq+KvH9L9B/pxMVwbLirg==}
     peerDependencies:
       react: '>=16.8.0'
     dependencies:
