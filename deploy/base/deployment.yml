@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ecommerce-shop-ui-deployment
+  name: ecommerce-shop-ui
   labels:
-    app: ecommerce-shop-ui-deployment
+    app: ecommerce-shop-ui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ecommerce-shop-ui-deployment
+      app: ecommerce-shop-ui
   template:
     metadata:
       labels:
-        app: ecommerce-shop-ui-deployment
+        app: ecommerce-shop-ui
     spec:
       containers:
-        - name: ecommerce-shop-ui-container
+        - name: ecommerce-shop-ui
           image: ghcr.io/jamess-lucass/ecommerce-shop-ui:latest
           imagePullPolicy: Always
           ports:

@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ecommerce-shop-ui-ingress
+  name: ecommerce-shop-ui
   annotations:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
 spec:
@@ -14,6 +14,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: ecommerce-shop-ui-service
+                name: ecommerce-shop-ui
                 port:
                   number: 80

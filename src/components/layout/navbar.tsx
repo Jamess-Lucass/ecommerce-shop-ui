@@ -82,7 +82,12 @@ export default function Navbar() {
         </Flex>
 
         <Flex align="center" gap={12}>
-          <ActionIcon component="a" href={`/basket/${basketId}`}>
+          <ActionIcon
+            component="a"
+            variant="transparent"
+            href={`/basket/${basketId}`}
+            disabled={!basketId || !data || data?.items.length === 0}
+          >
             <Indicator
               inline={true}
               label={data?.items.length}

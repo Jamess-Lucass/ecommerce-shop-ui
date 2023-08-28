@@ -1,10 +1,10 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: ecommerce-shop-ui-service
+  name: ecommerce-shop-ui
 spec:
   selector:
-    app: ecommerce-shop-ui-deployment
+    app: ecommerce-shop-ui
   ports:
     - protocol: TCP
       targetPort: 3000
