@@ -283,7 +283,12 @@ export default function CatalogPage() {
                 <Grid.Col key={item.id} sm={6} md={4} lg={3}>
                   <Card shadow="sm" radius="md" withBorder padding={12}>
                     <Card.Section>
-                      <Image src={item.images[0].url} alt={item.name} />
+                      <Image
+                        src={item.images[0]?.url}
+                        alt={item.name}
+                        height="200px"
+                        withPlaceholder
+                      />
                     </Card.Section>
 
                     <Flex align="center" justify="space-between">
