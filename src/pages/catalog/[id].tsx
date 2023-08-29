@@ -104,7 +104,7 @@ export default function CatalogDetails() {
       enabled: isReady,
       onSuccess: (data) => {
         const image = data.images[0];
-        setMainImageUrl(image.url);
+        setMainImageUrl(image?.url);
       },
     }
   );

@@ -66,7 +66,7 @@ export default function BasketItem({
   return (
     <Flex gap={16}>
       <Image
-        src={catalogItem?.images[0].url}
+        src={catalogItem?.images[0]?.url}
         alt={catalogItem?.name}
         height={100}
         width={100}
