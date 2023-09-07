@@ -2,6 +2,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
 import { APIResponse, Catalog, Order } from "@/types";
 import { formatPrice } from "@/utils/format-price";
+import { withTransaction } from "@elastic/apm-rum-react";
 import { Loader, Title, Text, Box, Card } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -11,7 +12,7 @@ type Params = {
   id: string;
 };
 
-export default function OrderDetails() {
+function OrderDetails() {
   const { query, isReady } = useRouter();
   const { user } = useAuth();
   const { id } = query as Params;
@@ -92,3 +93,5 @@ export default function OrderDetails() {
     </>
   );
 }
+
+export default withTransaction("OrderDetails", "component")(OrderDetails);

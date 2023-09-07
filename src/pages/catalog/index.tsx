@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
 import { APIResponse, Catalog } from "@/types";
 import { formatPrice } from "@/utils/format-price";
+import { withTransaction } from "@elastic/apm-rum-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Loader,
@@ -50,7 +51,7 @@ export const schema = z.object({
 
 type Inputs = z.infer<typeof schema>;
 
-export default function CatalogPage() {
+function CatalogPage() {
   const { user } = useAuth();
   const [isAuthModalOpen, { open: authModalOpen, close: authModalClose }] =
     useDisclosure(false);
@@ -360,3 +361,5 @@ export default function CatalogPage() {
     </>
   );
 }
+
+export default withTransaction("Catalog", "component")(CatalogPage);

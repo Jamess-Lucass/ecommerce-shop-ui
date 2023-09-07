@@ -7,6 +7,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        - NEXT_PUBLIC_ELASTIC_APM_SERVER_URL=http://localhost:8200
+        - NEXT_PUBLIC_ELASTIC_APM_SERVICE_NAME=shop-ui
+        - NEXT_PUBLIC_ELASTIC_APM_DISTRIBUTED_TRACE_ORIGINS=http?:\/\/localhost
         - NEXT_PUBLIC_IDENTITY_SERVICE_BASE_URL=http://localhost:1000
         - NEXT_PUBLIC_LOGIN_UI_BASE_URL=http://localhost:2000
         - NEXT_PUBLIC_CATALOG_SERVICE_BASE_URL=http://localhost:1002

@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 const schema = z.object({
+  ELASTIC_APM_SERVER_URL: z.string().url().optional(),
+  ELASTIC_APM_SERVICE_NAME: z.string().optional(),
+  ELASTIC_APM_DISTRIBUTED_TRACE_ORIGINS: z.string().optional(),
   IDENTITY_SERVICE_BASE_URL: z.string().url(),
   LOGIN_UI_BASE_URL: z.string().url(),
   CATALOG_SERVICE_BASE_URL: z.string().url().optional(),
@@ -14,6 +17,10 @@ const data = {
   CATALOG_SERVICE_BASE_URL: process.env.NEXT_PUBLIC_CATALOG_SERVICE_BASE_URL,
   BASKET_SERVICE_BASE_URL: process.env.NEXT_PUBLIC_BASKET_SERVICE_BASE_URL,
   ORDER_SERVICE_BASE_URL: process.env.NEXT_PUBLIC_ORDER_SERVICE_BASE_URL,
+  ELASTIC_APM_SERVER_URL: process.env.NEXT_PUBLIC_ELASTIC_APM_SERVER_URL,
+  ELASTIC_APM_SERVICE_NAME: process.env.NEXT_PUBLIC_ELASTIC_APM_SERVICE_NAME,
+  ELASTIC_APM_DISTRIBUTED_TRACE_ORIGINS:
+    process.env.NEXT_PUBLIC_ELASTIC_APM_DISTRIBUTED_TRACE_ORIGINS,
 };
 
 export const env = schema.parse(data);

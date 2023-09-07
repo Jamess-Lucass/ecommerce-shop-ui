@@ -21,6 +21,7 @@ import {
 } from "@mantine/core";
 import { formatPrice } from "@/utils/format-price";
 import BasketItem from "@/components/basket/basket-item";
+import { withTransaction } from "@elastic/apm-rum-react";
 
 export const schema = z.object({
   name: z.string().min(1).max(256),
@@ -35,7 +36,7 @@ type Params = {
   id: string;
 };
 
-export default function BasketDetails() {
+function BasketDetails() {
   const { query, isReady } = useRouter();
   const { id } = query as Params;
   const { setBasketId } = useBasketIdStore((state) => state);
@@ -250,3 +251,5 @@ export default function BasketDetails() {
     </Box>
   );
 }
+
+export default withTransaction("BasketDetails", "component")(BasketDetails);

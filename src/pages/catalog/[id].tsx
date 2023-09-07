@@ -4,6 +4,7 @@ import { env } from "@/environment";
 import { useBasketIdStore } from "@/stores";
 import { Basket, BasketItem, Catalog } from "@/types";
 import { formatPrice } from "@/utils/format-price";
+import { withTransaction } from "@elastic/apm-rum-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Carousel } from "@mantine/carousel";
 import {
@@ -61,7 +62,7 @@ const schema = z.object({
 
 type Inputs = z.infer<typeof schema>;
 
-export default function CatalogDetails() {
+function CatalogDetails() {
   const { user } = useAuth();
   const [isAuthModalOpen, { open: authModalOpen, close: authModalClose }] =
     useDisclosure(false);
@@ -254,7 +255,14 @@ export default function CatalogDetails() {
 
         <Flex direction={{ base: "column", lg: "row" }} gap={48}>
           <Flex direction="column" gap={24} maw={500}>
-            <Image src={mainImageUrl} alt={data.name} radius="md" />
+            <Image
+              src={mainImageUrl}
+              alt={data.name}
+              radius="md"
+              withPlaceholder
+              height="500px"
+              width="400px"
+            />
 
             <Carousel
               withIndicators
@@ -412,3 +420,5 @@ export default function CatalogDetails() {
     </>
   );
 }
+
+export default withTransaction("CatalogDetails", "component")(CatalogDetails);

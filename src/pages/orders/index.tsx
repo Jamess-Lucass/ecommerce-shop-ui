@@ -2,12 +2,13 @@ import { useAuth } from "@/contexts/auth-context";
 import { env } from "@/environment";
 import { Order } from "@/types";
 import { formatPrice } from "@/utils/format-price";
+import { withTransaction } from "@elastic/apm-rum-react";
 import { Loader, Table, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 
-export default function Orders() {
+function Orders() {
   const { user } = useAuth();
 
   const getOrders = async (signal: AbortSignal | undefined) => {
@@ -64,3 +65,5 @@ export default function Orders() {
     </Table>
   );
 }
+
+export default withTransaction("Orders", "component")(Orders);
