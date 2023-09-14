@@ -30,6 +30,7 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useFlags, useLDClient } from "launchdarkly-react-client-sdk";
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -53,6 +54,7 @@ type Inputs = z.infer<typeof schema>;
 
 function CatalogPage() {
   const { user } = useAuth();
+  const ldClient = useLDClient();
   const [isAuthModalOpen, { open: authModalOpen, close: authModalClose }] =
     useDisclosure(false);
   const queryClient = useQueryClient();
@@ -241,11 +243,14 @@ function CatalogPage() {
     </form>
   );
 
+  const val = ldClient?.variation("show-products", false);
+
   return (
     <>
       <Breadcrumbs mb={22} separator=">" px={{ base: 0, lg: 48 }}>
         <Anchor href="/">Home</Anchor>
         <Text>Catalog</Text>
+        <Text>flag: {String(val)}</Text>
       </Breadcrumbs>
 
       <Flex gap={20}>

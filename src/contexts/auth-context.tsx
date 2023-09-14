@@ -5,10 +5,12 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
 } from "react";
 import { env } from "../environment";
 import { User } from "../types";
+import { LDContext, useLDClient } from "launchdarkly-react-client-sdk";
 
 type AuthContextType = {
   user: User | undefined;
@@ -23,6 +25,8 @@ type Props = {
 };
 
 export function AuthProvider({ children }: Props) {
+  const ldClient = useLDClient();
+
   const getUser = async (signal?: AbortSignal) => {
     const response = await axios.get<User>(
       `${env.IDENTITY_SERVICE_BASE_URL}/api/v1/oauth/me`,
@@ -62,6 +66,21 @@ export function AuthProvider({ children }: Props) {
   const handleSignout = useCallback(() => {
     signoutMutation.mutate();
   }, [signoutMutation]);
+
+  useEffect(() => {
+    if (ldClient && user) {
+      const context: LDContext = {
+        kind: "user",
+        key: user.id,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+      };
+
+      console.log("context", context);
+
+      ldClient.identify(context);
+    }
+  }, [user, ldClient]);
 
   const value = useMemo(
     () => ({

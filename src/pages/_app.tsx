@@ -15,13 +15,11 @@ import { useEffect } from "react";
 import { init as initApm } from "@elastic/apm-rum";
 import { env } from "@/environment";
 import { useRouter } from "next/router";
+import { withLDProvider } from "launchdarkly-react-client-sdk";
 
 const inter = Inter({ subsets: ["latin"], weight: "400" });
 
-export default function App({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppProps) {
+function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const { pathname } = useRouter();
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: "mantine-color-scheme",
@@ -37,7 +35,7 @@ export default function App({
       serviceName: env.ELASTIC_APM_SERVICE_NAME,
       serverUrl: env.ELASTIC_APM_SERVER_URL,
       serviceVersion: "",
-      logLevel: "trace",
+      logLevel: "info",
       pageLoadTransactionName: pathname,
       distributedTracing: true,
       propagateTracestate: true,
@@ -88,3 +86,10 @@ export default function App({
     </ColorSchemeProvider>
   );
 }
+
+export default withLDProvider<any>({
+  clientSideID: "",
+  reactOptions: {
+    useCamelCaseFlagKeys: false,
+  },
+})(App);
